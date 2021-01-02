@@ -1,0 +1,19 @@
+.App {
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background: radial-gradient(ellipse at top, #e66465, transparent),
+            radial-gradient(ellipse at bottom, #4d9f0c, transparent);
+    
+  }
+  .Chatroom{
+      color: white;
+  }
+    .title{
+        font-style: oblique;
+        color: white;
+    }
+    .ChatForm{
+        padding: 10px;
+        display: inline;
+        color: black;
+    }
