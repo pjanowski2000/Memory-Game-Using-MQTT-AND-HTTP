@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from 'react';
-import Chatstarter from './components/Chatstarter.js'
+import Selector from './components/Selector.js'
 
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
     <div className="App">
     <header className="App-header">
     
-    <Chatstarter></Chatstarter>
+    <Selector></Selector>
     
     </header>
     </div>

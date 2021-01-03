@@ -54,13 +54,17 @@ const Gamelist = ({ user }) => {
 
 
     }
-    function handlegameselect(e){
-       
-        setgameselect(<Gamewaitroom name={e} usernick={user}> </Gamewaitroom>)
+    function handlegameselect1(e){
+       //tutaj post na http?
+        setgameselect(<Gamewaitroom name={e} usernick={user} type={"gamer"}> </Gamewaitroom>)
         setselect(true)
     }
-
-    let view = gamelist.map((elem) => (<div key={uuidv4()} onClick={()=>handlegameselect(elem)} >  {elem} </div>))
+    function handlegameselect2(e){
+        //tutaj post na http?
+         setgameselect(<Gamewaitroom name={e} usernick={user} type={"viewer"}> </Gamewaitroom>)
+         setselect(true)
+     }
+    let view = gamelist.map((elem) => (<div key={uuidv4()}  >  {elem} <button onClick={()=>handlegameselect1(elem)}>Join</button> <button onClick={()=>handlegameselect2(elem)}>View</button></div>))
     const test=<div>Halko</div>
         if(select){
             return(
@@ -79,7 +83,7 @@ const Gamelist = ({ user }) => {
                     New Game Name:
         <input type="text" value={Newgame} onChange={ChangeHandler} />
                 </label>
-                <input type="submit" value="Send" />
+                <input type="submit" value="Add" />
             </form> </h3>
             <h1 onClick={() => refresh()}>Game List</h1>
             {view}
