@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import uuidv4 from 'uuid';
-
+import Gamewaitroom from './Gamewaitroom'
 const axios = require('axios');
 
 const Gamelist = ({ user }) => {
-
+    
+    const [gameselect, setgameselect] = useState(<div>foooooo</div>)
+    const [select, setselect] = useState(false)
     const [gamelist, setgamelist] = useState([])
     const [Newgame, setNewgame] = useState('')
     useEffect(() => {
@@ -52,9 +54,24 @@ const Gamelist = ({ user }) => {
 
 
     }
+    function handlegameselect(e){
+       
+        setgameselect(<Gamewaitroom name={e} usernick={user}> </Gamewaitroom>)
+        setselect(true)
+    }
 
-    let view = gamelist.map((elem) => (<div key={uuidv4()} >  {elem} </div>))
-    return (
+    let view = gamelist.map((elem) => (<div key={uuidv4()} onClick={()=>handlegameselect(elem)} >  {elem} </div>))
+    const test=<div>Halko</div>
+        if(select){
+            return(
+            <div className="App">
+            {gameselect}
+            </div>
+            )
+        }
+
+        else{
+            return (
         <div className="App">
             <h1>Create New Game</h1>
             <h3><form onSubmit={sendNewGame} >
@@ -66,9 +83,10 @@ const Gamelist = ({ user }) => {
             </form> </h3>
             <h1 onClick={() => refresh()}>Game List</h1>
             {view}
-
-        </div>
-    )
+            
+        </div>)
+        }
+    
 }
 
 

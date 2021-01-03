@@ -1,30 +1,20 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Gameform from './Gameform.js';
 import Gamelist from './Gamelist.js';
 
 function Gamestarter() {
-  const [User,setUser]=useState('')
-  if (User===''){
-  return (
-    <div className="App">
-    <header className="App-header">
-    
-    <Gameform User={setUser}> </Gameform>
-    </header>
-    </div>
-  );
-  }
-  else{
-    return(
-    <div className="App">
-    <header className="App-header">
-    
-    {User}
-    <Gamelist user={User}> </Gamelist>
-    </header>
-    </div>
-    )
-  }
+    const [User, setUser] = useState('')
+    if (User === '') {
+        return (
+            <Gameform User={setUser}> </Gameform>
+        );
+    }
+    else {
+        return (
+            <Gamelist user={User}> </Gamelist>
+
+        )
+    }
 }
 
 export default Gamestarter;
