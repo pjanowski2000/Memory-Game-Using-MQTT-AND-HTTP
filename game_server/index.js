@@ -19,9 +19,20 @@ function findgame(id, type, person, number) {
     return "Podałeś zły numer gry :("
   }
   switch (type) {
+    case "SEE_ALL":
+      const view=boardlist[wyn].allpeople.map( elem =>{ 
+        if(boardlist[wyn].players.includes(elem)){
+          return `${elem} (gamer)`
+        }
+        else{
+          return `${elem} (viewer)`
+        }
+
+      })
+      return  view
     case "ADD_PLAYER":
       return boardlist[wyn].addplayer(person)
-    case "ADD_VIEWER":
+    case "ADD_VIEWER":   
       return boardlist[wyn].addviewer(person)
     case "GET":
       return boardlist[wyn].getTiles()
@@ -53,6 +64,9 @@ app.post('/:id/newplayer', (req, res) => {
 })
 app.post('/:id/newviewer', (req, res) => {
   res.send(findgame(req.params.id, "ADD_VIEWER", req.body.player))
+})
+app.get('/:id/allplayers', (req, res) => {
+  res.send(findgame(req.params.id, "SEE_ALL"))
 })
 app.post('/:id/start', (req, res) => {
   res.send(findgame(req.params.id, "START", req.body.player))

@@ -56,11 +56,17 @@ const Gamelist = ({ user }) => {
     }
     function handlegameselect1(e){
        //tutaj post na http?
+       axios.post(`http://localhost:3050/${e}/newplayer`, {
+           player:user
+          })
         setgameselect(<Gamewaitroom name={e} usernick={user} type={"gamer"}> </Gamewaitroom>)
         setselect(true)
     }
     function handlegameselect2(e){
         //tutaj post na http?
+        axios.post(`http://localhost:3050/${e}/newviewer`, {
+           player:user
+          })
          setgameselect(<Gamewaitroom name={e} usernick={user} type={"viewer"}> </Gamewaitroom>)
          setselect(true)
      }
