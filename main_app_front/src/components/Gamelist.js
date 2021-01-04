@@ -65,7 +65,7 @@ const Gamelist = ({ user }) => {
          setselect(true)
      }
     let view = gamelist.map((elem) => (<div key={uuidv4()}  >  {elem} <button onClick={()=>handlegameselect1(elem)}>Join</button> <button onClick={()=>handlegameselect2(elem)}>View</button></div>))
-    const test=<div>Halko</div>
+    
         if(select){
             return(
             <div className="App">

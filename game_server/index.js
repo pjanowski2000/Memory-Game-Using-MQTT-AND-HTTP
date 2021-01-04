@@ -11,7 +11,7 @@ app.use(function(req, res, next) {
   next();
 });
 let gamelist=[]
-function findgame(id,type,elem,type=0){
+function findgame(id,type,elem,type){
   let wyn=gamelist.findIndex(elem =>{return elem===id})
   if(wyn===-1){
     return "Podałeś zły numer gry :("
