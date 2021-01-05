@@ -1,5 +1,44 @@
 
+const MQTT = require("async-mqtt");
 
+
+
+async function refresh(game) {
+  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
+  try {
+
+    await client.publish(game, 'refresh');
+
+  } catch (e) {
+    console.log(e.stack);
+    process.exit();
+  }
+}
+
+async function refresh_tile(game) {
+  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
+  try {
+
+    await client.publish(game, 'refresh tiles');
+
+  } catch (e) {
+    console.log(e.stack);
+    process.exit();
+  }
+}
+
+
+async function start(game) {
+  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
+  try {
+
+    await client.publish(game, 'start');
+
+  } catch (e) {
+    console.log(e.stack);
+    process.exit();
+  }
+}
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -11,7 +50,7 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-let  boardlist=[]
+let boardlist = []
 let gamelist = []
 function findgame(id, type, person, number) {
   let wyn = gamelist.findIndex(elem => { return elem === id })
@@ -20,24 +59,31 @@ function findgame(id, type, person, number) {
   }
   switch (type) {
     case "SEE_ALL":
-      const view=boardlist[wyn].allpeople.map( elem =>{ 
-        if(boardlist[wyn].players.includes(elem)){
+      let view = boardlist[wyn].allpeople.map(elem => {
+        if (boardlist[wyn].players.includes(elem)) {
           return `${elem} (gamer)`
         }
-        else{
+        else {
           return `${elem} (viewer)`
         }
 
       })
-      return  view
+
+      return view
+    case "START":
+      start(id)
+      return 'halko'
     case "ADD_PLAYER":
+      refresh(id)
       return boardlist[wyn].addplayer(person)
-    case "ADD_VIEWER":   
+    case "ADD_VIEWER":
+      refresh(id)
       return boardlist[wyn].addviewer(person)
     case "GET":
       return boardlist[wyn].getTiles()
     case "POST":
       boardlist[wyn].tileClick(number)
+      refresh_tile(id)
       return boardlist[wyn].getTiles()
     case "DELETE":
       return boardlist[wyn].delete_move(person)
@@ -68,7 +114,7 @@ app.post('/:id/newviewer', (req, res) => {
 app.get('/:id/allplayers', (req, res) => {
   res.send(findgame(req.params.id, "SEE_ALL"))
 })
-app.post('/:id/start', (req, res) => {
+app.get('/:id/start', (req, res) => {
   res.send(findgame(req.params.id, "START", req.body.player))
 })
 app.get('/:id', (req, res) => {
@@ -76,7 +122,7 @@ app.get('/:id', (req, res) => {
 })
 
 app.post('/:id', (req, res) => {
-  res.send(findgame(req.params.id, "POST", req.body.number,req.body.number))
+  res.send(findgame(req.params.id, "POST", req.body.number, req.body.number))
 })
 app.delete('/:id', (req, res) => {
   res.send(findgame(req.params.id, "DELETE", req.body.number))

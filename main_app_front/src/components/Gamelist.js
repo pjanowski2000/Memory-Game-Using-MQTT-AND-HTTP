@@ -55,7 +55,7 @@ const Gamelist = ({ user }) => {
 
     }
     function handlegameselect1(e){
-       //tutaj post na http?
+       
        axios.post(`http://localhost:3050/${e}/newplayer`, {
            player:user
           })
@@ -63,7 +63,7 @@ const Gamelist = ({ user }) => {
         setselect(true)
     }
     function handlegameselect2(e){
-        //tutaj post na http?
+        
         axios.post(`http://localhost:3050/${e}/newviewer`, {
            player:user
           })
