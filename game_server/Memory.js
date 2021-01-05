@@ -1,7 +1,7 @@
 const MQTT = require("async-mqtt");
 
 async function refresh_tile(game) {
-  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
+  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt');
   try {
 
     await client.publish(game, 'refresh tiles');
@@ -21,10 +21,15 @@ module.exports.Memory = class Memory {
       this.canGet = true,
       this.allpeople=[],
       this.players=[]
-      this.player_number=0  
+      this.player_number=0
+
   }
   addviewer(person){
     this.allpeople.push(person)
+  }
+  actualplayer(){
+   
+    return  this.players[this.player_number]
   }
   addplayer(person){
     
@@ -33,6 +38,7 @@ module.exports.Memory = class Memory {
   }
 
   startGame() {
+    
     this.tiles = [];
     this.tilesChecked = [];
     this.moveCount = 0;
@@ -55,15 +61,20 @@ module.exports.Memory = class Memory {
       
     
       if (this.tilesChecked.length === 2) {
-        
+        if(this.player_number+1===this.players.length){
+          this.player_number=0
+        }
+        else{
+          this.player_number+=1
+        }
         if (this.tilesChecked[0] === this.tilesChecked[1]) {
           //czeka i czyści kafelki
           refresh_tile(id)
-          setTimeout(() => this.deleteTiles(id), 1000);
+          setTimeout(() => this.deleteTiles(id), 500);
         } else {
           //czeka i odwraca kafelki
           refresh_tile(id)
-          setTimeout(() => this.resetTiles(id), 1000);
+          setTimeout(() => this.resetTiles(id), 500);
         }
       }
     }

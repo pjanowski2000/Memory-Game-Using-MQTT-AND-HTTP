@@ -15,21 +15,11 @@ async function refresh(game) {
   }
 }
 
-async function refresh_tile(game) {
-  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
-  try {
 
-    await client.publish(game, 'refresh tiles');
-
-  } catch (e) {
-    console.log(e.stack);
-    process.exit();
-  }
-}
 
 
 async function start(game) {
-  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
+  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt')
   try {
 
     await client.publish(game, 'start');
@@ -72,20 +62,21 @@ function findgame(id, type, person, number) {
       return view
     case "START":
       start(id)
-      return 'halko'
+      boardlist[wyn].startGame()
+      return ''
     case "ADD_PLAYER":
       refresh(id)
       return boardlist[wyn].addplayer(person)
     case "ADD_VIEWER":
       refresh(id)
-      console.log('restart');
-      boardlist[wyn].startGame()
       return boardlist[wyn].addviewer(person)
     case "GET":
       return boardlist[wyn].getTiles()
     case "POST":
+      if(boardlist[wyn].actualplayer()===person){
       boardlist[wyn].tileClick(number,id)
-      return boardlist[wyn].getTiles()
+      return true }
+      return false
     case "DELETE":
       return boardlist[wyn].delete_move(person)
   }
@@ -124,7 +115,7 @@ app.get('/:id/start', (req, res) => {
 })
 
 app.post('/:id', (req, res) => {
-  res.send(findgame(req.params.id, "POST", req.body.number, req.body.number))
+  res.send(findgame(req.params.id, "POST", req.body.player, req.body.number))
 })
 app.delete('/:id', (req, res) => {
   res.send(findgame(req.params.id, "DELETE", req.body.number))
