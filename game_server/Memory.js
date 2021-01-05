@@ -1,6 +1,19 @@
+const MQTT = require("async-mqtt");
+
+async function refresh_tile(game) {
+  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
+  try {
+
+    await client.publish(game, 'refresh tiles');
+
+  } catch (e) {
+    console.log(e.stack);
+    process.exit();
+  }
+}
+
 module.exports.Memory = class Memory {
   constructor() {
-      this.tileCount = 12,
       this.actual_tiles=['X','X','X','X','X','X','X','X','X','X','X','X']
       this.tiles = [],
       this.tilesChecked = [],
@@ -14,6 +27,7 @@ module.exports.Memory = class Memory {
     this.allpeople.push(person)
   }
   addplayer(person){
+    
     this.allpeople.push(person)
     this.players.push(person)
   }
@@ -23,44 +37,60 @@ module.exports.Memory = class Memory {
     this.tilesChecked = [];
     this.moveCount = 0;
 
-    for (let i = 1; i <= tileCount/2; i++) {
+    for (let i = 1; i <= 6; i++) {
       this.tiles.push(i);
     }
-    for (let i = 1; i <= tileCount/2; i++) {
+    for (let i = 1; i <= 6; i++) {
       this.tiles.push(i);
     }
     this.tiles.sort(() => Math.random() - 0.5)
   }
-  tileClick(elem) {
+  tileClick(elem,id) {
     if (this.canGet) {
-      if (!this.tilesChecked[0]) {
+      
         this.tilesChecked.push(this.tiles[elem]);
         this.actual_tiles[elem]=this.tiles[elem].toString();
-        //wysłanie wartości tego elem do react???
-      }
+        refresh_tile(id)
+        
+      
+    
       if (this.tilesChecked.length === 2) {
+        
         if (this.tilesChecked[0] === this.tilesChecked[1]) {
           //czeka i czyści kafelki
-          setTimeout(() => this.deleteTiles(), 500);
+          refresh_tile(id)
+          setTimeout(() => this.deleteTiles(id), 1000);
         } else {
           //czeka i odwraca kafelki
-          setTimeout(() => this.resetTiles(), 500);
+          refresh_tile(id)
+          setTimeout(() => this.resetTiles(id), 1000);
         }
       }
     }
   }
-  deleteTiles() {
-    this.tilesChecked.forEach(el => {
-
-    });
+  deleteTiles(id) {
+    this.actual_tiles=this.actual_tiles.map((elem)=>{
+      if(elem !=='X' && elem !=='O'){
+        elem='O'
+      }
+      return elem
+    })
 
     this.canGet = true;
     this.tilesChecked = [];
+    refresh_tile(id)
   }
-  resetTiles() {
-    this.tilesChecked.forEach(el =>{} );
+  resetTiles(id) {
+    this.actual_tiles=this.actual_tiles.map((elem)=>{
+      if(elem !=='X' && elem !=='O'){
+        elem='X'
+      }
+      return elem
+    })
+   
     this.tilesChecked = [];
     this.canGet = true;
+    refresh_tile(id)
   }
   getTiles(){
 

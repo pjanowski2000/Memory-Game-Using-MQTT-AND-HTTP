@@ -78,12 +78,13 @@ function findgame(id, type, person, number) {
       return boardlist[wyn].addplayer(person)
     case "ADD_VIEWER":
       refresh(id)
+      console.log('restart');
+      boardlist[wyn].startGame()
       return boardlist[wyn].addviewer(person)
     case "GET":
       return boardlist[wyn].getTiles()
     case "POST":
-      boardlist[wyn].tileClick(number)
-      refresh_tile(id)
+      boardlist[wyn].tileClick(number,id)
       return boardlist[wyn].getTiles()
     case "DELETE":
       return boardlist[wyn].delete_move(person)
@@ -105,6 +106,10 @@ app.post('/', (req, res) => {
     res.send(true)
   }
 })
+app.get('/:id', (req, res) => {
+  res.send(findgame(req.params.id, "GET", 0))
+})
+
 app.post('/:id/newplayer', (req, res) => {
   res.send(findgame(req.params.id, "ADD_PLAYER", req.body.player))
 })
@@ -116,9 +121,6 @@ app.get('/:id/allplayers', (req, res) => {
 })
 app.get('/:id/start', (req, res) => {
   res.send(findgame(req.params.id, "START", req.body.player))
-})
-app.get('/:id', (req, res) => {
-  res.send(findgame(req.params.id, "GET", 0))
 })
 
 app.post('/:id', (req, res) => {

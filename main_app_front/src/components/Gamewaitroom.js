@@ -9,11 +9,10 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   const [Client, setClient] = useState(mqtt.connect('ws://10.45.3.14:8000/mqtt'));
   const [connectionStatus, setConnectionStatus] = useState(false);
   const [Tiles, setTiles] = useState(['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'])
-  const [Started, isStarted] = useState(false)
+  const [Started, isStarted] = useState(true)
   const [gamelist, setgamelist] = useState([])
   
-  //tutaj sub na mqtt i start?
-  //const waiters
+  
   useEffect(()=>{
     
     if(!connectionStatus){
@@ -36,7 +35,8 @@ const Gamewaitroom = ({ name, usernick, type }) => {
         refresh()
       }
       if (wiadomosc==="refresh tiles"){
-        refresh()
+        console.log('resetuje kafelki');
+        refresh_tiles()
       }      
       });
       
@@ -61,7 +61,9 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   }
   function refresh_tiles() {
     axios.get(`http://localhost:3050/${name}`)
+      
       .then(function (response) {
+        
         setTiles(response.data)
       })
       .catch(function (error) {
@@ -78,25 +80,25 @@ const Gamewaitroom = ({ name, usernick, type }) => {
       })
   }
   function chosetile(index){
+    console.log(index);
     axios.post(`http://localhost:3050/${name}`,{
       number:index
     })
       .then(function (response) {
-        setTiles(response)
+        setTiles(response.data)
       })
       .catch(function (error) {
         console.log(error);
       })
   }
-  let kafelki =Tiles.map((tile,index)=>(<div key={uuidv4()} onClick={()=>chosetile(index)}>{tile}</div>))
+  let kafelki =Tiles.map((tile,index)=>(<div key={uuidv4()} onClick={()=>chosetile(index)} className='tile'>{tile}</div>))
   let view = gamelist.map((elem) => (<div key={elem}>{elem}</div>))
   if (Started) {
     return (
       <div>
-        
-
           Start gry
         {kafelki}
+        <Chatroom room={`Game/${name}`} user={`${usernick}(${type})`} ></Chatroom>
       </div>
     );
   }
