@@ -4,7 +4,7 @@ const MQTT = require("async-mqtt");
 
 
 async function refresh(game) {
-  const client = await MQTT.connectAsync("tcp:10.45.3.14:1883");
+  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt');
   try {
 
     await client.publish(game, 'refresh');
@@ -15,6 +15,17 @@ async function refresh(game) {
   }
 }
 
+async function want_undo(game,player) {
+  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt');
+  try {
+
+    await client.publish(game, `${player} want to undo move`);
+
+  } catch (e) {
+    console.log(e.stack);
+    process.exit();
+  }
+}
 
 
 
@@ -60,7 +71,25 @@ function findgame(id, type, person, number) {
       })
 
       return view
-    case "IS STARTED":
+    case "UNDO_MOVE":
+      if(boardlist[wyn].tilesChecked.length===1  && boardlist[wyn].actualplayer()===person){
+        boardlist[wyn].want_undo=true
+        want_undo(id,person)
+        
+        return true
+
+      }
+      else{
+        return false
+      }
+      case "UNDO_ANSWEAR":
+       {
+        if(boardlist[wyn].players.includes(person)){
+          return  boardlist[wyn].addanswear(number)
+        }
+        return 'Nice try'
+        }
+    case "IS_STARTED":
       return boardlist[wyn].is_started
     case "START":
       start(id)
@@ -74,16 +103,16 @@ function findgame(id, type, person, number) {
       return boardlist[wyn].addviewer(person)
     case "GET":
       return boardlist[wyn].getTiles()
-      case "SCORE":
-        let resultscore=[]
-        
-        for (let i=0;i<boardlist[wyn].players.length;i++){
-            resultscore.push((`${boardlist[wyn].players[i]} ${boardlist[wyn].scoreboard[i]}`))
-        }
-        return resultscore
+    case "SCORE":
+      let resultscore = []
+
+      for (let i = 0; i < boardlist[wyn].players.length; i++) {
+        resultscore.push((`${boardlist[wyn].players[i]} ${boardlist[wyn].scoreboard[i]}`))
+      }
+      return resultscore
     case "POST":
-      if (boardlist[wyn].actualplayer() === person) {
-        boardlist[wyn].tileClick(number, id,person)
+      if (boardlist[wyn].actualplayer() === person && !boardlist[wyn].want_undo) {
+        boardlist[wyn].tileClick(number, id, person)
         return true
       }
       return false
@@ -111,13 +140,19 @@ app.get('/:id', (req, res) => {
   res.send(findgame(req.params.id, "GET", 0))
 })
 app.get('/:id/isstarted', (req, res) => {
-  res.send(findgame(req.params.id, "IS STARTED", 0))
+  res.send(findgame(req.params.id, "IS_STARTED", 0))
 })
 app.post('/:id/newplayer', (req, res) => {
   res.send(findgame(req.params.id, "ADD_PLAYER", req.body.player))
 })
 app.post('/:id/newviewer', (req, res) => {
   res.send(findgame(req.params.id, "ADD_VIEWER", req.body.player))
+})
+app.post('/:id/undo', (req, res) => {
+  res.send(findgame(req.params.id, "UNDO_MOVE", req.body.player))
+})
+app.post('/:id/undoanswear', (req, res) => {
+  res.send(findgame(req.params.id, "UNDO_ANSWEAR", req.body.player,req.body.answear))
 })
 app.get('/:id/allplayers', (req, res) => {
   res.send(findgame(req.params.id, "SEE_ALL"))

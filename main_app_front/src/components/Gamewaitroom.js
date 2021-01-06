@@ -12,7 +12,8 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   const [Started, isStarted] = useState(false)
   const [playerlist, setplayerlist] = useState([])
   const [scorelist, setscorelist] = useState([])
- // const [test, settest] = useState(initialState)
+  const [Question, setQuestion] = useState(false)
+  // const [test, settest] = useState(initialState)
   //console.log(test);
   useEffect(() => {
 
@@ -49,10 +50,15 @@ const Gamewaitroom = ({ name, usernick, type }) => {
       }
       if (wiadomosc.startsWith('end,')) {
         console.log(wiadomosc);
-        let winner=wiadomosc.split(',')
+        let winner = wiadomosc.split(',')
         alert(`Good Game The Winner is ${winner[1]}`)
         isStarted(false)
       }
+      if (wiadomosc.endsWith('want to undo move')) {
+        setQuestion(true)
+       alert(wiadomosc)
+      }
+      
     });
 
   }, [Client])
@@ -70,7 +76,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
       .then(function (response) {
 
         isStarted(response.data)
-        if(response.data){
+        if (response.data) {
           refresh_tiles()
           score()
         }
@@ -108,7 +114,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
       .catch(function (error) {
         console.log(error);
       })
-     
+
   }
   function startgame() {
     if (type === 'gamer') {
@@ -127,27 +133,55 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   function score() {
     axios.get(`http://localhost:3050/${name}/score`)
 
-    .then(function (response) {
+      .then(function (response) {
 
-      setscorelist(response.data)
+        setscorelist(response.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+  }
+  function undomove() {
+    axios.post(`http://localhost:3050/${name}/undo`,{player: usernick})
+    .then(function (response) {
+        if(response.data){
+          alert('Send question to all to undo move')
+        }
+        else{
+          alert('You cant undo move at this moment')
+        }
+      
     })
     .catch(function (error) {
       console.log(error);
     })
   }
+  function question_answear(elem) {
+    
+    axios.post(`http://localhost:3050/${name}/undoanswear`,{player: usernick,answear:elem})
+    .then(function (response) {
+       alert(response.data)
+      
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    setQuestion(false)
+  }
+  
   function chosetile(index) {
     if (type === 'gamer') {
       console.log(Tiles[index]);
       if (Tiles[index] === 'X') {
         axios.post(`http://localhost:3050/${name}`, {
           number: index,
-          player:  usernick
+          player: usernick
         })
           .then(function (response) {
-            if(response.data){
+            if (response.data) {
               console.log('ok');
             }
-            else{
+            else {
               alert('To nie twoja tura')
             }
           })
@@ -165,21 +199,23 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   }
   let kafelki = Tiles.map((tile, index) => (<div key={uuidv4()} onClick={() => chosetile(index)} className='tile'>{tile}</div>))
   let view = playerlist.map((elem) => (<div key={elem}>{elem}</div>))
-  let boardlist=scorelist.map((elem)=>(<div key={elem}>{elem}</div>))
-    return (
-      <div >
-        {Started ?    null  :   <button onClick={() => startgame()}>StartGame</button>}
-        {Started ?  <div>  Game {name} </div>    :   <h1 >Waiting Game {name} </h1>}
-        {Started ?  <div className='Tiles'>{kafelki} </div>    :   <div>{view}</div>}
-        {Started ?  <div > Scoreboard </div>    :   null}
-        {Started ?  <div className='ScoreBoardList'> {boardlist} </div>    :   null}
-        
-        
-        <Chatroom room={`Game/${name}`} user={`${usernick}(${type})`} ></Chatroom>
+  let boardlist = scorelist.map((elem) => (<div key={elem}>{elem}</div>))
+  return (
+    <div >
+      {Started ? null : <button onClick={() => startgame()}>StartGame</button>}
+      {Started ? <div>  Game {name} </div> : <h1 >Waiting Game {name} </h1>}
+      {Question ? <div> <button onClick={() => question_answear(true)}>Yes</button> <button onClick={() => question_answear(false)}>No</button> </div>:null }
+      {Started ? <div className='Tiles'>{kafelki} </div> : <div>{view}</div>}
+      {Started ? <button onClick={() => undomove()}>Undo move</button> : null}
+      {Started ? <div > Scoreboard </div> : null}
+      {Started ? <div className='ScoreBoardList'> {boardlist} </div> : null}
 
-      </div>
-    )
-  }
+
+      <Chatroom room={`Game/${name}`} user={`${usernick}(${type})`} ></Chatroom>
+
+    </div>
+  )
+}
 
 
 
