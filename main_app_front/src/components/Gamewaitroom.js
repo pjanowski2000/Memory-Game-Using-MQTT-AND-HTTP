@@ -120,21 +120,13 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   }
   let kafelki = Tiles.map((tile, index) => (<div key={uuidv4()} onClick={() => chosetile(index)} className='tile'>{tile}</div>))
   let view = gamelist.map((elem) => (<div key={elem}>{elem}</div>))
-  if (Started) {
-    return (
-      <div>
-        Start gry
-        {kafelki}
-        <Chatroom room={`Game/${name}`} user={`${usernick}(${type})`} ></Chatroom>
-      </div>
-    );
-  }
-  else {
+
     return (
       <div >
-        <button onClick={() => startgame()}>StartGame</button>
-        <h1 onClick={() => refresh()}>Waiting List: {name}</h1>
-
+        {Started ? <div> Start gry</div>     :   <button onClick={() => startgame()}>StartGame</button>}
+        {Started ?  <div className='Tiles'>{kafelki} </div>    :   <h1 >Waiting List: {name}</h1>}
+        
+      
         {view}
         <Chatroom room={`Game/${name}`} user={`${usernick}(${type})`} ></Chatroom>
 
@@ -142,6 +134,6 @@ const Gamewaitroom = ({ name, usernick, type }) => {
     )
   }
 
-}
+
 
 export default Gamewaitroom;
