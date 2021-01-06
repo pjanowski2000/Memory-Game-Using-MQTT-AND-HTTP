@@ -21,6 +21,7 @@ module.exports.Memory = class Memory {
       this.canGet = true,
       this.allpeople=[],
       this.players=[]
+      this.scoreboard=[]
       this.player_number=0
       this.is_started=false
 
@@ -36,6 +37,7 @@ module.exports.Memory = class Memory {
     
     this.allpeople.push(person)
     this.players.push(person)
+    this.scoreboard.push(0)
   }
 
   startGame() {
@@ -52,7 +54,7 @@ module.exports.Memory = class Memory {
     }
     this.tiles.sort(() => Math.random() - 0.5)
   }
-  tileClick(elem,id) {
+  tileClick(elem,id,person) {
     if (this.canGet) {
       
         this.tilesChecked.push(this.tiles[elem]);
@@ -62,18 +64,21 @@ module.exports.Memory = class Memory {
       
     
       if (this.tilesChecked.length === 2) {
-        if(this.player_number+1===this.players.length){
-          this.player_number=0
-        }
-        else{
-          this.player_number+=1
-        }
+        
+        
         if (this.tilesChecked[0] === this.tilesChecked[1]) {
-          //czeka i czyści kafelki
+          
+          this.scoreboard[this.player_number]+=1
+          console.log(this.scoreboard);
           refresh_tile(id)
           setTimeout(() => this.deleteTiles(id), 500);
         } else {
-          //czeka i odwraca kafelki
+          if(this.player_number+1===this.players.length){
+            this.player_number=0
+          }
+          else{
+            this.player_number+=1
+          }
           refresh_tile(id)
           setTimeout(() => this.resetTiles(id), 500);
         }
@@ -99,7 +104,7 @@ module.exports.Memory = class Memory {
       }
       return elem
     })
-   
+    
     this.tilesChecked = [];
     this.canGet = true;
     refresh_tile(id)

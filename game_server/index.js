@@ -76,7 +76,7 @@ function findgame(id, type, person, number) {
       return boardlist[wyn].getTiles()
     case "POST":
       if (boardlist[wyn].actualplayer() === person) {
-        boardlist[wyn].tileClick(number, id)
+        boardlist[wyn].tileClick(number, id,person)
         return true
       }
       return false
