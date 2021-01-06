@@ -75,11 +75,12 @@ function findgame(id, type, person, number) {
     case "GET":
       return boardlist[wyn].getTiles()
       case "SCORE":
-        let wyn=[]
-        for (let i=0;i<boardlist[wyn].players.lenght;i++){
-            wyn.push([boardlist[wyn].players[i],boardlist[wyn].scoreboard[i]])
+        let resultscore=[]
+        
+        for (let i=0;i<boardlist[wyn].players.length;i++){
+            resultscore.push((`${boardlist[wyn].players[i]} ${boardlist[wyn].scoreboard[i]}`))
         }
-        return wyn
+        return resultscore
     case "POST":
       if (boardlist[wyn].actualplayer() === person) {
         boardlist[wyn].tileClick(number, id,person)
@@ -120,6 +121,9 @@ app.post('/:id/newviewer', (req, res) => {
 })
 app.get('/:id/allplayers', (req, res) => {
   res.send(findgame(req.params.id, "SEE_ALL"))
+})
+app.get('/:id/score', (req, res) => {
+  res.send(findgame(req.params.id, "SCORE"))
 })
 app.get('/:id/start', (req, res) => {
   res.send(findgame(req.params.id, "START", req.body.player))

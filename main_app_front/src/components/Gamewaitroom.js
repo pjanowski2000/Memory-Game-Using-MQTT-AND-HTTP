@@ -11,6 +11,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   const [Tiles, setTiles] = useState(['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'])
   const [Started, isStarted] = useState(false)
   const [playerlist, setplayerlist] = useState([])
+  const [scorelist, setscorelist] = useState([])
  // const [test, settest] = useState(initialState)
   //console.log(test);
   useEffect(() => {
@@ -39,10 +40,12 @@ const Gamewaitroom = ({ name, usernick, type }) => {
       if (wiadomosc === "start") {
         isStarted(true)
         refresh_tiles()
+        score()
       }
       if (wiadomosc === "refresh tiles") {
         console.log('resetuje kafelki');
         refresh_tiles()
+        score()
       }
     });
 
@@ -63,6 +66,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
         isStarted(response.data)
         if(response.data){
           refresh_tiles()
+          score()
         }
       })
       .catch(function (error) {
@@ -98,6 +102,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
       .catch(function (error) {
         console.log(error);
       })
+     
   }
   function startgame() {
     if (type === 'gamer') {
@@ -112,6 +117,17 @@ const Gamewaitroom = ({ name, usernick, type }) => {
     else {
       alert('You arent gamer you cant play :(')
     }
+  }
+  function score() {
+    axios.get(`http://localhost:3050/${name}/score`)
+
+    .then(function (response) {
+
+      setscorelist(response.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
   }
   function chosetile(index) {
     if (type === 'gamer') {
@@ -143,14 +159,15 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   }
   let kafelki = Tiles.map((tile, index) => (<div key={uuidv4()} onClick={() => chosetile(index)} className='tile'>{tile}</div>))
   let view = playerlist.map((elem) => (<div key={elem}>{elem}</div>))
-
+  let boardlist=scorelist.map((elem)=>(<div key={elem}>{elem}</div>))
     return (
       <div >
         {Started ?    null  :   <button onClick={() => startgame()}>StartGame</button>}
         {Started ?  <div>  Game {name} </div>    :   <h1 >Waiting Game {name} </h1>}
         {Started ?  <div className='Tiles'>{kafelki} </div>    :   <div>{view}</div>}
+        {Started ?  <div > Scoreboard </div>    :   null}
+        {Started ?  <div className='ScoreBoardList'> {boardlist} </div>    :   null}
         
-      
         
         <Chatroom room={`Game/${name}`} user={`${usernick}(${type})`} ></Chatroom>
 
