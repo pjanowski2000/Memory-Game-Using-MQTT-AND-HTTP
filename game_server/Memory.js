@@ -11,10 +11,22 @@ async function refresh_tile(game) {
     process.exit();
   }
 }
+async function end_game(game,winner) {
+  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt');
+  try {
+
+    await client.publish(game, `end,${winner}`);
+
+  } catch (e) {
+    console.log(e.stack);
+    process.exit();
+  }
+}
 
 module.exports.Memory = class Memory {
   constructor() {
-      this.actual_tiles=['X','X','X','X','X','X','X','X','X','X','X','X']
+      //this.actual_tiles=['X','X','X','X','X','X','X','X','X','X','X','X']
+      this.actual_tiles=[]
       this.tiles = [],
       this.tilesChecked = [],
       this.moveCount = 0,
@@ -45,12 +57,14 @@ module.exports.Memory = class Memory {
     this.tiles = [];
     this.tilesChecked = [];
     this.moveCount = 0;
-
-    for (let i = 1; i <= 6; i++) {
+    this.actual_tiles=[];
+    for (let i = 1; i <= 3; i++) {
       this.tiles.push(i);
+      this.actual_tiles.push('X');
     }
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 3; i++) {
       this.tiles.push(i);
+      this.actual_tiles.push('X');
     }
     this.tiles.sort(() => Math.random() - 0.5)
   }
@@ -67,9 +81,9 @@ module.exports.Memory = class Memory {
         
         
         if (this.tilesChecked[0] === this.tilesChecked[1]) {
-          
+         
           this.scoreboard[this.player_number]+=1
-          console.log(this.scoreboard);
+          
           refresh_tile(id)
           setTimeout(() => this.deleteTiles(id), 500);
         } else {
@@ -95,7 +109,27 @@ module.exports.Memory = class Memory {
 
     this.canGet = true;
     this.tilesChecked = [];
+    console.log(this.actual_tiles);
     refresh_tile(id)
+    
+    const isO = (currentValue) => currentValue === 'O';
+
+    if(this.actual_tiles.every(isO)){
+      this.is_started=false
+      if(this.scoreboard.length!=1){
+        console.log(this.scoreboard);
+      let max=Math.max(...this.scoreboard)
+      let iswinner = (playerscore) => playerscore === max;
+      let winnernumber=this.scoreboard.findIndex(iswinner)
+      let winner=this.players[winnernumber]
+      this.scoreboard=this.scoreboard.map((elem)=> 0)
+      end_game(id,winner)}
+      else{
+        this.scoreboard=this.scoreboard.map((elem)=> 0)
+        end_game(id,this.players[0])
+      }
+
+  }
   }
   resetTiles(id) {
     this.actual_tiles=this.actual_tiles.map((elem)=>{
@@ -108,6 +142,7 @@ module.exports.Memory = class Memory {
     this.tilesChecked = [];
     this.canGet = true;
     refresh_tile(id)
+   
   }
   getTiles(){
     return this.actual_tiles

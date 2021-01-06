@@ -47,6 +47,12 @@ const Gamewaitroom = ({ name, usernick, type }) => {
         refresh_tiles()
         score()
       }
+      if (wiadomosc.startsWith('end,')) {
+        console.log(wiadomosc);
+        let winner=wiadomosc.split(',')
+        alert(`Good Game The Winner is ${winner[1]}`)
+        isStarted(false)
+      }
     });
 
   }, [Client])
