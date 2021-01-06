@@ -85,7 +85,7 @@ function findgame(id, type, person, number) {
       case "UNDO_ANSWEAR":
        {
         if(boardlist[wyn].players.includes(person)){
-          return  boardlist[wyn].addanswear(number)
+          return  boardlist[wyn].addanswear(id,number)
         }
         return 'Nice try'
         }

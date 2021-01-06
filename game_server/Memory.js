@@ -42,16 +42,17 @@ module.exports.Memory = class Memory {
   addviewer(person) {
     this.allpeople.push(person)
   }
-  addanswear(answear) {
+  addanswear(id,answear) {
     this.undo_answears.push(answear)
     if (this.undo_answears.length === this.players.length) {
       if (this.undo_answears.every(elem => elem === true)) {
 
         this.want_undo = false;
-        this.resetTiles();
+        this.resetTiles(id);
       }
       else {
         this.want_undo = false;
+
       }
       return 'All players decided';
     }
@@ -133,7 +134,6 @@ module.exports.Memory = class Memory {
     if (this.actual_tiles.every(isO)) {
       this.is_started = false
       if (this.scoreboard.length != 1) {
-        console.log(this.scoreboard);
         let max = Math.max(...this.scoreboard)
         let iswinner = (playerscore) => playerscore === max;
         let winnernumber = this.scoreboard.findIndex(iswinner)
