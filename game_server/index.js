@@ -60,6 +60,8 @@ function findgame(id, type, person, number) {
       })
 
       return view
+    case "IS STARTED":
+      return boardlist[wyn].is_started
     case "START":
       start(id)
       boardlist[wyn].startGame()
@@ -73,9 +75,10 @@ function findgame(id, type, person, number) {
     case "GET":
       return boardlist[wyn].getTiles()
     case "POST":
-      if(boardlist[wyn].actualplayer()===person){
-      boardlist[wyn].tileClick(number,id)
-      return true }
+      if (boardlist[wyn].actualplayer() === person) {
+        boardlist[wyn].tileClick(number, id)
+        return true
+      }
       return false
     case "DELETE":
       return boardlist[wyn].delete_move(person)
@@ -100,7 +103,9 @@ app.post('/', (req, res) => {
 app.get('/:id', (req, res) => {
   res.send(findgame(req.params.id, "GET", 0))
 })
-
+app.get('/:id/isstarted', (req, res) => {
+  res.send(findgame(req.params.id, "IS STARTED", 0))
+})
 app.post('/:id/newplayer', (req, res) => {
   res.send(findgame(req.params.id, "ADD_PLAYER", req.body.player))
 })

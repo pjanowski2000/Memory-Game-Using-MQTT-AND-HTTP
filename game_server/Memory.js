@@ -22,6 +22,7 @@ module.exports.Memory = class Memory {
       this.allpeople=[],
       this.players=[]
       this.player_number=0
+      this.is_started=false
 
   }
   addviewer(person){
@@ -38,7 +39,7 @@ module.exports.Memory = class Memory {
   }
 
   startGame() {
-    
+    this.is_started=true
     this.tiles = [];
     this.tilesChecked = [];
     this.moveCount = 0;

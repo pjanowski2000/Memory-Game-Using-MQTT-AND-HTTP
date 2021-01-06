@@ -10,15 +10,16 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   const [connectionStatus, setConnectionStatus] = useState(false);
   const [Tiles, setTiles] = useState(['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'])
   const [Started, isStarted] = useState(false)
-  const [gamelist, setgamelist] = useState([])
-
-
+  const [playerlist, setplayerlist] = useState([])
+ // const [test, settest] = useState(initialState)
+  //console.log(test);
   useEffect(() => {
 
     if (!connectionStatus) {
       setClient(mqtt.connect('ws://10.45.3.14:8000/mqtt'))
       setConnectionStatus(true)
     }
+
   }, [])
   useEffect(() => {
     if (name) {
@@ -37,7 +38,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
       }
       if (wiadomosc === "start") {
         isStarted(true)
-        refresh()
+        refresh_tiles()
       }
       if (wiadomosc === "refresh tiles") {
         console.log('resetuje kafelki');
@@ -49,7 +50,29 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   useEffect(() => {
     axios.get(`http://localhost:3050/${name}/allplayers`)
       .then(function (response) {
-        setgamelist(response.data)
+        setplayerlist(response.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+  }, [])
+  useEffect(() => {
+    axios.get(`http://localhost:3050/${name}/isstarted`)
+      .then(function (response) {
+
+        isStarted(response.data)
+        if(response.data){
+          refresh_tiles()
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+  }, [])
+  useEffect(() => {
+    axios.get(`http://localhost:3050/${name}/allplayers`)
+      .then(function (response) {
+        setplayerlist(response.data)
       })
       .catch(function (error) {
         console.log(error);
@@ -59,7 +82,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
     axios.get(`http://localhost:3050/${name}/allplayers`)
       .then(function (response) {
 
-        setgamelist(response.data)
+        setplayerlist(response.data)
       })
       .catch(function (error) {
         console.log(error);
@@ -111,7 +134,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
           })
       }
       else {
-        alert('You cant chose that tile you can only choose X tiles :(')
+        alert('You cant choose that tile you can only choose X tiles :(')
       }
     }
     else {
@@ -119,12 +142,12 @@ const Gamewaitroom = ({ name, usernick, type }) => {
     }
   }
   let kafelki = Tiles.map((tile, index) => (<div key={uuidv4()} onClick={() => chosetile(index)} className='tile'>{tile}</div>))
-  let view = gamelist.map((elem) => (<div key={elem}>{elem}</div>))
+  let view = playerlist.map((elem) => (<div key={elem}>{elem}</div>))
 
     return (
       <div >
         {Started ?    null  :   <button onClick={() => startgame()}>StartGame</button>}
-        {Started ?  <div>  Game: {name} </div>    :   <h1 >Waiting List: {name}</h1>}
+        {Started ?  <div>  Game {name} </div>    :   <h1 >Waiting Game {name} </h1>}
         {Started ?  <div className='Tiles'>{kafelki} </div>    :   <div>{view}</div>}
         
       
