@@ -123,11 +123,12 @@ const Gamewaitroom = ({ name, usernick, type }) => {
 
     return (
       <div >
-        {Started ? <div> Start gry</div>     :   <button onClick={() => startgame()}>StartGame</button>}
-        {Started ?  <div className='Tiles'>{kafelki} </div>    :   <h1 >Waiting List: {name}</h1>}
+        {Started ?    null  :   <button onClick={() => startgame()}>StartGame</button>}
+        {Started ?  <div>  Game: {name} </div>    :   <h1 >Waiting List: {name}</h1>}
+        {Started ?  <div className='Tiles'>{kafelki} </div>    :   <div>{view}</div>}
         
       
-        {view}
+        
         <Chatroom room={`Game/${name}`} user={`${usernick}(${type})`} ></Chatroom>
 
       </div>
