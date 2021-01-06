@@ -74,6 +74,12 @@ function findgame(id, type, person, number) {
       return boardlist[wyn].addviewer(person)
     case "GET":
       return boardlist[wyn].getTiles()
+      case "SCORE":
+        let wyn=[]
+        for (let i=0;i<boardlist[wyn].players.lenght;i++){
+            wyn.push([boardlist[wyn].players[i],boardlist[wyn].scoreboard[i]])
+        }
+        return wyn
     case "POST":
       if (boardlist[wyn].actualplayer() === person) {
         boardlist[wyn].tileClick(number, id,person)

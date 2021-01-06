@@ -110,7 +110,6 @@ module.exports.Memory = class Memory {
     refresh_tile(id)
   }
   getTiles(){
-
     return this.actual_tiles
   }
 }
