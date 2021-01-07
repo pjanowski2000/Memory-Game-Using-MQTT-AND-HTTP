@@ -3,7 +3,7 @@ import Chatroom from './Chatroom.js'
 import uuidv4 from 'uuid';
 const axios = require('axios');
 const mqtt = require('mqtt');
-const Gamewaitroom = ({ name, usernick, type }) => {
+const Gameroom = ({ name, usernick, type }) => {
 
   const mqtt = require('mqtt');
   const [Client, setClient] = useState(mqtt.connect('ws://10.45.3.14:8000/mqtt'));
@@ -194,7 +194,6 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   
   function chosetile(index) {
     if (type === 'gamer') {
-      console.log(Tiles[index]);
       if (Tiles[index] === 'X') {
         axios.post(`http://localhost:3050/${name}`, {
           number: index,
@@ -202,6 +201,7 @@ const Gamewaitroom = ({ name, usernick, type }) => {
         })
           .then(function (response) {
             if (response.data) {
+              console.log(response.data);
               console.log('ok');
             }
             else {
@@ -242,4 +242,4 @@ const Gamewaitroom = ({ name, usernick, type }) => {
 
 
 
-export default Gamewaitroom;
+export default Gameroom;

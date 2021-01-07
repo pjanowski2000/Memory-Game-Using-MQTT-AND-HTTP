@@ -28,12 +28,11 @@ const Gameform=({User}) =>{
     })
     return (
         <>
-        <form onSubmit={formik.handleSubmit} >
+        <form onSubmit={formik.handleSubmit}  className='Gameform'>
         <div>
         <div>
-            <label htmlFor="text">Nickname</label>
-            <input id="name" name="name" type="text" onChange={formik.handleChange} value={formik.values.name}
-            />
+            
+            <input id="name" name="name" type="text" onChange={formik.handleChange} value={formik.values.name} placeholder='Nickname' />
             {formik.errors.name ? <div className='error'>{formik.errors.name}</div>: null}
           </div>
           <div>

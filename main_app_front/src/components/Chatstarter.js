@@ -7,22 +7,18 @@ function Chatstarter() {
   const [Room,setRoom]=useState('')
   if (User.name===''){
   return (
-    <div className="App">
-    <header className="App-header">
+    
     
     <Chatform User={setUser} Room={setRoom}></Chatform>
-    </header>
-    </div>
+    
   );
   }
   else{
     return(
-    <div className="App">
-    <header className="App-header">
+    
     
     <Chatroom user={User} room={Room}></Chatroom>
-    </header>
-    </div>
+    
     )
   }
 }

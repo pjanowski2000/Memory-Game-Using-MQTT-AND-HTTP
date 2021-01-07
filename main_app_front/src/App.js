@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react';
 import Selector from './components/Selector.js'
-
+import './App.css';
 
 function App() {
  

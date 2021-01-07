@@ -34,7 +34,7 @@ const Chatform=({User,Room}) =>{
     })
     return (
         <>
-        <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
+        <form onSubmit={formik.handleSubmit} onReset={formik.handleReset} className='Chatform'>
         <div>
         <div>
             <label htmlFor="text">Nickname</label>

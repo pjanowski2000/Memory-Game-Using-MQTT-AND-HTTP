@@ -1,6 +1,5 @@
 import React,{useEffect,useState} from 'react';
 import uuidv4 from 'uuid';
-import './Chatroom.css';
  const mqtt    = require('mqtt');
 const Chatroom=({room,user}) => {
   

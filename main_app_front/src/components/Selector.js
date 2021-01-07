@@ -11,9 +11,9 @@ const Selector = () => {
     }
     if (Selector === '') {
         return (
-            <div className="App">
-                <div onClick={() => game()}>Gra</div>
-                <div onClick={() => chat()} >Chat</div>
+            <div className="Choose">
+                <div onClick={() => game()} className="selectors">Gra</div>
+                <div onClick={() => chat()} className="selectors">Chat</div>
             </div>
         );
     }
