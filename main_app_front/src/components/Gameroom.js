@@ -13,8 +13,7 @@ const Gameroom = ({ name, usernick, type }) => {
   const [playerlist, setplayerlist] = useState([])
   const [scorelist, setscorelist] = useState([])
   const [Question, setQuestion] = useState(false)
-  // const [test, settest] = useState(initialState)
-  //console.log(test);
+  
   useEffect(() => {
 
     if (!connectionStatus) {
@@ -55,13 +54,13 @@ const Gameroom = ({ name, usernick, type }) => {
         isStarted(false)
       }
       if (wiadomosc.endsWith('want to undo move')) {
-        if(type==='gamer'){
-        setQuestion(true)}
+        
+        setQuestion(true)
        alert(wiadomosc)
       }
       if (wiadomosc.endsWith('want to start game')) {
-        if(type==='gamer'){
-        setQuestion(true)}
+        
+        setQuestion(true)
        alert(wiadomosc)
       }
       
@@ -229,9 +228,9 @@ const Gameroom = ({ name, usernick, type }) => {
     <div >
       {Started ? null : <button onClick={() => startgame()}>StartGame</button>}
       {Started ? <div>  Game {name} </div> : <h1 >Waiting Game {name} </h1>}
-      {Question ? <div> <button onClick={() => question_answear(true)}>Yes</button> <button onClick={() => question_answear(false)}>No</button> </div>:null }
+      {Question && type==='gamer' ? <div> <button onClick={() => question_answear(true)}>Yes</button> <button onClick={() => question_answear(false)}>No</button> </div>:null }
       {Started ? <div className='Tiles'>{kafelki} </div> : <div>{view}</div>}
-      {Started ? <button onClick={() => undomove()}>Undo move</button> : null}
+      {Started  && type==='gamer' ? <button onClick={() => undomove()}>Undo move</button> : null}
       {Started ? <div > Scoreboard </div> : null}
       {Started ? <div className='ScoreBoardList'> {boardlist} </div> : null}
 

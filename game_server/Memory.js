@@ -97,17 +97,17 @@ module.exports.Memory = class Memory {
     this.tilesChecked = [];
     this.moveCount = 0;
     this.actual_tiles = [];
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 5; i++) {
       this.tiles.push(i);
       this.actual_tiles.push('X');
     }
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 5; i++) {
       this.tiles.push(i);
       this.actual_tiles.push('X');
     }
     this.tiles.sort(() => Math.random() - 0.5)
   }
-  tileClick(elem, id, person) {
+  tileClick(elem, id) {
     if (this.canGet) {
 
       this.tilesChecked.push(this.tiles[elem]);
