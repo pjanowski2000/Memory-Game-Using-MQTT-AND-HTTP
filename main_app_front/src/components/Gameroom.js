@@ -55,11 +55,13 @@ const Gameroom = ({ name, usernick, type }) => {
         isStarted(false)
       }
       if (wiadomosc.endsWith('want to undo move')) {
-        setQuestion(true)
+        if(type==='gamer'){
+        setQuestion(true)}
        alert(wiadomosc)
       }
       if (wiadomosc.endsWith('want to start game')) {
-        setQuestion(true)
+        if(type==='gamer'){
+        setQuestion(true)}
        alert(wiadomosc)
       }
       

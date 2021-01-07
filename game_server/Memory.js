@@ -35,7 +35,6 @@ async function start(game) {
 }
 module.exports.Memory = class Memory {
   constructor() {
-    //this.actual_tiles=['X','X','X','X','X','X','X','X','X','X','X','X']
     this.actual_tiles = []
     this.tiles = [],
       this.tilesChecked = [],
