@@ -58,6 +58,10 @@ const Gamewaitroom = ({ name, usernick, type }) => {
         setQuestion(true)
        alert(wiadomosc)
       }
+      if (wiadomosc.endsWith('want to start game')) {
+        setQuestion(true)
+       alert(wiadomosc)
+      }
       
     });
 
@@ -118,9 +122,14 @@ const Gamewaitroom = ({ name, usernick, type }) => {
   }
   function startgame() {
     if (type === 'gamer') {
-      axios.get(`http://localhost:3050/${name}/start`)
+      axios.post(`http://localhost:3050/${name}/start`,{player: usernick})
         .then(function (response) {
-          console.log('gra rozpoczeta');
+          if(response.data){
+            alert('Send question to all to start game')
+          }
+          else{
+            alert('You cant start game')
+          }
         })
         .catch(function (error) {
           console.log(error);
@@ -157,17 +166,31 @@ const Gamewaitroom = ({ name, usernick, type }) => {
     })
   }
   function question_answear(elem) {
-    
-    axios.post(`http://localhost:3050/${name}/undoanswear`,{player: usernick,answear:elem})
-    .then(function (response) {
-       alert(response.data)
-      
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-    setQuestion(false)
-  }
+    if(Started){
+      axios.post(`http://localhost:3050/${name}/undoanswear`,{player: usernick,answear:elem})
+      .then(function (response) {
+         alert(response.data)
+        
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      setQuestion(false)
+    }
+    else{
+      axios.post(`http://localhost:3050/${name}/startanswear`,{player: usernick,answear:elem})
+      .then(function (response) {
+         alert(response.data)
+        
+      })
+      .catch(function (error) {
+        console.log(error);
+      })
+      setQuestion(false)
+    }
+    }
+   
+  
   
   function chosetile(index) {
     if (type === 'gamer') {

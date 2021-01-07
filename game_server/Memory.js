@@ -22,7 +22,17 @@ async function end_game(game, winner) {
     process.exit();
   }
 }
+async function start(game) {
+  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt')
+  try {
 
+    await client.publish(game, 'start');
+
+  } catch (e) {
+    console.log(e.stack);
+    process.exit();
+  }
+}
 module.exports.Memory = class Memory {
   constructor() {
     //this.actual_tiles=['X','X','X','X','X','X','X','X','X','X','X','X']
@@ -37,15 +47,15 @@ module.exports.Memory = class Memory {
     this.player_number = 0
     this.is_started = false
     this.want_undo = false
-    this.undo_answears = []
+    this.answears = []
   }
   addviewer(person) {
     this.allpeople.push(person)
   }
-  addanswear(id,answear) {
-    this.undo_answears.push(answear)
-    if (this.undo_answears.length === this.players.length) {
-      if (this.undo_answears.every(elem => elem === true)) {
+  addanswearundo(id,answear) {
+    this.answears.push(answear)
+    if (this.answears.length === this.players.length) {
+      if (this.answears.every(elem => elem === true)) {
 
         this.want_undo = false;
         this.resetTiles(id);
@@ -54,6 +64,19 @@ module.exports.Memory = class Memory {
         this.want_undo = false;
 
       }
+      this.answears=[]
+      return 'All players decided';
+    }
+    return 'Wair for others to decide';
+  }
+  addanswearstart(id,answear) {
+    this.answears.push(answear)
+    if (this.answears.length === this.players.length) {
+      if (this.answears.every(elem => elem === true)) {
+        this.startGame()
+        start(id)
+      }
+      this.answears=[]
       return 'All players decided';
     }
     return 'Wair for others to decide';

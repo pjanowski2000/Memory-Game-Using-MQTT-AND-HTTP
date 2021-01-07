@@ -15,7 +15,7 @@ async function refresh(game) {
   }
 }
 
-async function want_undo(game,player) {
+async function want_undo(game, player) {
   const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt');
   try {
 
@@ -26,20 +26,20 @@ async function want_undo(game,player) {
     process.exit();
   }
 }
-
-
-
-async function start(game) {
-  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt')
+async function want_start(game, player) {
+  const client = await MQTT.connectAsync('ws://10.45.3.14:8000/mqtt');
   try {
 
-    await client.publish(game, 'start');
+    await client.publish(game, `${player} want to start game`);
 
   } catch (e) {
     console.log(e.stack);
     process.exit();
   }
 }
+
+
+
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -72,29 +72,32 @@ function findgame(id, type, person, number) {
 
       return view
     case "UNDO_MOVE":
-      if(boardlist[wyn].tilesChecked.length===1  && boardlist[wyn].actualplayer()===person){
-        boardlist[wyn].want_undo=true
-        want_undo(id,person)
-        
+      if (boardlist[wyn].tilesChecked.length === 1 && boardlist[wyn].actualplayer() === person) {
+        boardlist[wyn].want_undo = true
+        want_undo(id, person)
         return true
+      }
 
+      return false
+    case "UNDO_ANSWEAR":
+
+      if (boardlist[wyn].players.includes(person)) {
+        return boardlist[wyn].addanswearundo(id, number)
       }
-      else{
-        return false
-      }
-      case "UNDO_ANSWEAR":
-       {
-        if(boardlist[wyn].players.includes(person)){
-          return  boardlist[wyn].addanswear(id,number)
-        }
-        return 'Nice try'
-        }
+      return 'Nice try viewer ;)'
+
     case "IS_STARTED":
       return boardlist[wyn].is_started
     case "START":
-      start(id)
-      boardlist[wyn].startGame()
-      return ''
+        want_start(id,person)
+        return true
+    case "START_ANSWEAR":
+
+      if (boardlist[wyn].players.includes(person)) {
+        return boardlist[wyn].addanswearstart(id, number)
+      }
+      return 'Nice try viewer ;)'
+
     case "ADD_PLAYER":
       refresh(id)
       return boardlist[wyn].addplayer(person)
@@ -152,7 +155,10 @@ app.post('/:id/undo', (req, res) => {
   res.send(findgame(req.params.id, "UNDO_MOVE", req.body.player))
 })
 app.post('/:id/undoanswear', (req, res) => {
-  res.send(findgame(req.params.id, "UNDO_ANSWEAR", req.body.player,req.body.answear))
+  res.send(findgame(req.params.id, "UNDO_ANSWEAR", req.body.player, req.body.answear))
+})
+app.post('/:id/startanswear', (req, res) => {
+  res.send(findgame(req.params.id, "START_ANSWEAR", req.body.player, req.body.answear))
 })
 app.get('/:id/allplayers', (req, res) => {
   res.send(findgame(req.params.id, "SEE_ALL"))
@@ -160,7 +166,7 @@ app.get('/:id/allplayers', (req, res) => {
 app.get('/:id/score', (req, res) => {
   res.send(findgame(req.params.id, "SCORE"))
 })
-app.get('/:id/start', (req, res) => {
+app.post('/:id/start', (req, res) => {
   res.send(findgame(req.params.id, "START", req.body.player))
 })
 
